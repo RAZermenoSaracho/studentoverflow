@@ -1,0 +1,16 @@
+# Ignorar archivos de bytecode de Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Ignorar configuración sensible
+config/config.json
+
+# Ignorar archivos temporales de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar entornos virtuales (opcional, si lo usas localmente)
+venv/
+.env/
+*.env

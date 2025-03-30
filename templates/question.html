@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Pregunta{% endblock %}
+
+{% block content %}
+<h2>{{ question.title }}</h2>
+<div>{{ question.body | markdown | safe }}</div>
+<hr>
+<h3>Respuestas</h3>
+
+<ul>
+    {% for answer in answers %}
+    <li class="answer-item">
+        <div class="answer-text">
+            <strong>{{ answer.author.username }}:</strong>
+            <div>{{ answer.body | markdown | safe }}</div>
+        </div>
+        <div class="answer-votes">
+            <span class="vote-count">{{ answer.votes | map(attribute='value') | sum }}</span>
+            <form method="POST" action="/answer/{{ answer.id }}/vote" style="display:inline;">
+                <input type="hidden" name="value" value="1">
+                <button class="vote-button" type="submit">👍</button>
+            </form>
+            <form method="POST" action="/answer/{{ answer.id }}/vote" style="display:inline;">
+                <input type="hidden" name="value" value="-1">
+                <button class="vote-button" type="submit">👎</button>
+            </form>
+        </div>
+    </li>
+    {% else %}
+    <li>No hay respuestas aún.</li>
+    {% endfor %}
+</ul>
+
+<h3>Agregar respuesta</h3>
+<form method="POST" action="/question/{{ question.id }}/answer">
+    <textarea name="body" rows="6" cols="60" required></textarea><br>
+    <small style="display:block; margin-bottom: 10px; color: #666;">
+        Puedes usar <strong>Markdown</strong> para dar formato:<br>
+        • <code>**negrita**</code> → <strong>negrita</strong><br>
+        • <code>_cursiva_</code> → <em>cursiva</em><br>
+        • <code>`código`</code> → <code>código</code><br>
+        • <code># Título</code>, <code>## Subtítulo</code><br>
+        • <code>- lista</code> o <code>* lista</code> para listas<br>
+        • Salto de línea = presiona Enter dos veces<br>
+        • Para enlaces: <code>[texto](https://ejemplo.com)</code><br>
+        • Para imágenes: <code>![alt](https://img.com)</code>
+    </small>
+    <input type="submit" value="Responder">
+</form>
+{% endblock %}

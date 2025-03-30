@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<h2>Perfil de {{ user.username }}</h2>
+<p>Email: {{ user.email }}</p>
+
+<h3>Mis preguntas:</h3>
+<ul>
+    {% for question in user.questions %}
+    <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
+    {% else %}
+    <li>No has publicado ninguna pregunta.</li>
+    {% endfor %}
+</ul>
+
+<h3>Modificar mis datos</h3>
+<form method="POST" action="/profile/update">
+    <label>Nombre de usuario:</label><br>
+    <input type="text" name="username" value="{{ user.username }}"><br>
+    <label>Email:</label><br>
+    <input type="email" name="email" value="{{ user.email }}"><br><br>
+    <input type="submit" value="Actualizar">
+</form>
+{% endblock %}

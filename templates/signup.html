@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<h2>Crear Cuenta</h2>
+    <form action="/signup" method="post">
+        <label>Nombre de usuario:</label><br>
+        <input type="text" name="username" required><br>
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br>
+        <label>Contraseña:</label><br>
+        <input type="password" name="password" required><br><br>
+        <input type="submit" value="Registrarse">
+    </form>
+{% endblock %}
