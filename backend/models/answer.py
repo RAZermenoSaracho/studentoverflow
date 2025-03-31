@@ -1,5 +1,6 @@
-from backend.database import db
+from backend.extensions import db
 from datetime import datetime
+from backend.models.vote import Vote
 
 class Answer(db.Model):
     __tablename__ = 'answers'
@@ -10,4 +11,7 @@ class Answer(db.Model):
 
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    votes = db.relationship('Vote', backref='answer', lazy=True)
+    votes = db.relationship(Vote, backref='answer', lazy=True)
+
+    images = db.relationship("Image", backref="answer", cascade="all, delete-orphan")
+

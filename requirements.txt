@@ -2,5 +2,8 @@ Flask
 Flask-Login
 Flask-SQLAlchemy
 psycopg2-binary
+Flask-WTF
+WTForms
+Flask-CKEditor
 markdown
-python-dotenv
+bootstrap-flask

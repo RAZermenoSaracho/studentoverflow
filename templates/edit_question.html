@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar pregunta{% endblock %}
+
+{% block content %}
+<h2>Editar pregunta</h2>
+<form method="POST">
+    <label>Título:</label><br>
+    <input type="text" name="title" value="{{ question.title }}"><br><br>
+
+    <label>Contenido:</label><br>
+    <textarea name="body" id="body">{{ question.body }}</textarea><br><br>
+
+    <input type="submit" class="btn btn-success" value="Actualizar">
+</form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
+{% endblock %}

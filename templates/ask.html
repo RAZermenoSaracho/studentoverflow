@@ -5,24 +5,22 @@
 {% block content %}
 <h2>Haz una pregunta</h2>
 
-<form method="POST" action="/ask">
+<form method="POST" action="/ask" enctype="multipart/form-data">
     <label>Título:</label><br>
     <input type="text" name="title" required><br><br>
 
     <label>Detalles:</label><br>
-    <textarea name="body" rows="6" cols="60" required></textarea><br>
-    <small style="display:block; margin-bottom: 10px; color: #666;">
-        Puedes usar <strong>Markdown</strong> para dar formato:<br>
-        • <code>**negrita**</code> → <strong>negrita</strong><br>
-        • <code>_cursiva_</code> → <em>cursiva</em><br>
-        • <code>`código`</code> → <code>código</code><br>
-        • <code># Título</code>, <code>## Subtítulo</code><br>
-        • <code>- lista</code> o <code>* lista</code> para listas<br>
-        • Salto de línea = presiona Enter dos veces<br>
-        • Para enlaces: <code>[texto](https://ejemplo.com)</code><br>
-        • Para imágenes: <code>![alt](https://img.com)</code>
-    </small>
+    <textarea name="body" id="body" required></textarea><br><br>
 
-    <input type="submit" value="Publicar pregunta">
+    <div class="row">
+        <div class="col">
+            <label>Adjuntar imágenes:</label><br>
+            <input type="file" name="images" multiple><br><br>
+        </div>
+        <div class="col text-end"><input type="submit" value="Publicar pregunta" class="btn btn-primary mb-3"></div>
+    </div>
 </form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
 {% endblock %}

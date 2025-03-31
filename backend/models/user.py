@@ -1,6 +1,6 @@
-from backend.database import db
+from backend.extensions import db
 from datetime import datetime
-
+from backend.models.vote import Vote
 from flask_login import UserMixin
 
 class User(UserMixin, db.Model):
@@ -14,4 +14,4 @@ class User(UserMixin, db.Model):
 
     questions = db.relationship('Question', backref='author', lazy=True)
     answers = db.relationship('Answer', backref='author', lazy=True)
-    votes = db.relationship('Vote', backref='voter', lazy=True)
+    votes = db.relationship(Vote, backref='voter', lazy=True)

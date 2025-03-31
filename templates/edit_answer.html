@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar respuesta{% endblock %}
+
+{% block content %}
+<h2>Editar respuesta</h2>
+<form method="POST">
+    <textarea name="body" id="body">{{ answer.body }}</textarea><br><br>
+    <input type="submit" class="btn btn-success" value="Actualizar">
+</form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='body') }}
+{% endblock %}

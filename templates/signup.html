@@ -3,14 +3,20 @@
 {% block title %}Registro{% endblock %}
 
 {% block content %}
-<h2>Crear Cuenta</h2>
-    <form action="/signup" method="post">
-        <label>Nombre de usuario:</label><br>
-        <input type="text" name="username" required><br>
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br>
-        <label>Contraseña:</label><br>
-        <input type="password" name="password" required><br><br>
-        <input type="submit" value="Registrarse">
-    </form>
+<div class="row">
+    <div class="col-4 mobile-0"></div>
+    <div class="col-4 mobile-12">
+        <h2>Crear Cuenta</h2>
+        <form action="/signup" method="post">
+            <label>Nombre de usuario:</label><br>
+            <input type="text" name="username" required><br>
+            <label>Email:</label><br>
+            <input type="email" name="email" required><br>
+            <label>Contraseña:</label><br>
+            <input type="password" name="password" required><br><br>
+            <input type="submit" value="Registrarse" class="btn btn-primary mb-3">
+        </form>
+    </div>
+    <div class="col-4 mobile-0"></div>
+</div>
 {% endblock %}

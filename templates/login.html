@@ -3,13 +3,29 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2>Iniciar Sesión</h2>
-    <form action="/login" method="post">
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br>
-        <label>Contraseña:</label><br>
-        <input type="password" name="password" required><br><br>
-        <input type="submit" value="Entrar">
-    </form>
-    <p>¿No tienes cuenta? <a href="/signup">Regístrate aquí</a></p>
+<div class="row">
+    <div class="col-4 mobile-0"></div>
+    <div class="col-4 mobile-12">
+        <h2>Iniciar Sesión</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form action="/login" method="post">
+            <label>Email:</label><br>
+            <input type="email" name="email" required><br>
+            <label>Contraseña:</label><br>
+            <input type="password" name="password" required><br><br>
+            <input type="submit" value="Entrar" class="btn btn-primary mb-3">
+        </form>
+        <p>¿No tienes cuenta? <a href="/signup">Regístrate aquí</a></p>
+    </div>
+    <div class="col-4 mobile-0"></div>
+</div>
 {% endblock %}

@@ -1,16 +1,27 @@
-# Ignorar archivos de bytecode de Python
+# Python
 __pycache__/
-**/__pycache__/
 *.py[cod]
+*.pyo
+*.pyd
+*.env
+*.venv
+env/
+venv/
+ENV/
 
-# Ignorar configuración sensible
+# VSCode
+.vscode/
+
+# Mac
+.DS_Store
+
+# Sistema
+*.log
+
+# Archivos de configuración local
 config/config.json
 
-# Ignorar archivos temporales de sistema operativo
-.DS_Store
-Thumbs.db
-
-# Ignorar entornos virtuales (opcional, si lo usas localmente)
-venv/
-.env/
-*.env
+# Ignorar todo dentro de uploads
+static/uploads/*
+# Pero NO ignores el archivo .gitkeep
+!static/uploads/.gitkeep

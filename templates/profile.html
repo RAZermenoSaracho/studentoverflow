@@ -3,24 +3,56 @@
 {% block title %}Mi Perfil{% endblock %}
 
 {% block content %}
-<h2>Perfil de {{ user.username }}</h2>
-<p>Email: {{ user.email }}</p>
+<div class="row mb-5">
+    <div class="col-4 mobile-12">
+        <h2>Perfil de {{ user.username }}</h2>
+        <span>Email: {{ user.email }}</span>
+    </div>
+    <div class="col-4 mobile-0"></div>
+    <div class="col-4 mobile-12">
+        <button id="edit-button" class="btn btn-primary mb-3" onclick="
+            document.getElementById('edit-form').classList.remove('d-none');
+            document.getElementById('edit-button').classList.add('d-none');
+        ">Editar datos</button>
 
-<h3>Mis preguntas:</h3>
+        <form id="edit-form" class="d-none" method="POST" action="/profile/update">
+            <label>Nombre de usuario:</label><br>
+            <input type="text" name="username" value="{{ user.username }}"><br>
+            <label>Email:</label><br>
+            <input type="email" name="email" value="{{ user.email }}"><br>
+            <label>Nueva contraseña (opcional):</label><br>
+            <input type="password" name="password" placeholder="Dejar en blanco para no cambiar"><br><br>
+            <input type="submit" class="btn btn-success" value="Actualizar">
+        </form>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <h3>Mis preguntas:</h3>
+    </div>
+    <div class="col text-end">
+        <form method="GET" action="/profile">
+            <input type="text" name="q" placeholder="Buscar preguntas...">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+</div>
+
 <ul>
-    {% for question in user.questions %}
-    <li><a href="/question/{{ question.id }}">{{ question.title }}</a></li>
+    {% for question in questions %}
+    <div class="card">
+        <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
+        <p>{{ question.body[:150] | safe }}...</p>
+    </div>
     {% else %}
-    <li>No has publicado ninguna pregunta.</li>
+        {% if request.args.q %}
+            <p>No has publicado ninguna pregunta con "{{ request.args.q }}" en el título.</p>
+        {% else %}
+            <p>No has publicado ninguna pregunta.</p>
+        {% endif %}
     {% endfor %}
 </ul>
 
-<h3>Modificar mis datos</h3>
-<form method="POST" action="/profile/update">
-    <label>Nombre de usuario:</label><br>
-    <input type="text" name="username" value="{{ user.username }}"><br>
-    <label>Email:</label><br>
-    <input type="email" name="email" value="{{ user.email }}"><br><br>
-    <input type="submit" value="Actualizar">
-</form>
 {% endblock %}

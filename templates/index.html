@@ -3,18 +3,23 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-<h2>Preguntas recientes</h2>
-
-<form method="GET" action="/">
-    <input type="text" name="q" placeholder="Buscar preguntas...">
-    <input type="submit" value="Buscar">
-</form>
+<div class="row mb-5">
+    <div class="col">
+        <h2>Preguntas recientes</h2>
+    </div>
+    <div class="col text-end">
+        <form method="GET" action="/">
+            <input type="text" name="q" placeholder="Buscar preguntas...">
+            <input type="submit" value="Buscar">
+        </form>
+    </div>
+</div>
 
 <ul>
     {% for question in questions %}
     <div class="card">
         <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
-        <p>{{ question.body[:150] | markdown | safe }}...</p>
+        <p>{{ question.body[:150] | safe }}...</p>
     </div>
     {% else %}
     <p>No hay preguntas aún.</p>

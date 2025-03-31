@@ -1,7 +1,7 @@
-from flask import Blueprint, request, render_template, redirect, url_for
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from backend.database import db
+from backend.extensions import db
 from backend.models.user import User
 
 auth_bp = Blueprint('auth', __name__)
@@ -34,10 +34,17 @@ def login():
         password = request.form.get("password")
 
         user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password_hash, password):
-            login_user(user)
-            return redirect(url_for("views.index"))
-        return "Credenciales inválidas", 401
+
+        if not user:
+            flash("El correo no está registrado", "warning")
+            return redirect(url_for("auth.login"))
+
+        if not check_password_hash(user.password_hash, password):
+            flash("Contraseña incorrecta", "warning")
+            return redirect(url_for("auth.login"))
+
+        login_user(user)
+        return redirect(url_for("views.index"))
 
     return render_template("login.html")
 

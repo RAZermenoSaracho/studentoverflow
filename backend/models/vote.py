@@ -1,4 +1,4 @@
-from backend.database import db
+from backend.extensions import db
 
 class Vote(db.Model):
     __tablename__ = 'votes'
