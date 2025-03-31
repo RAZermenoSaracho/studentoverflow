@@ -11,7 +11,13 @@
     <label>Contenido:</label><br>
     <textarea name="body" id="body">{{ question.body }}</textarea><br><br>
 
-    <input type="submit" class="btn btn-success" value="Actualizar">
+    <div class="row">
+        <div class="col">
+            <label>Adjuntar imágenes:</label><br>
+            <input type="file" name="images" multiple><br><br>
+        </div>
+        <div class="col text-end"><input type="submit" value="Actualizar" class="btn btn-success"></div>
+    </div>
 </form>
 
 {{ ckeditor.load() }}

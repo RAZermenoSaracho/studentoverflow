@@ -48,3 +48,23 @@ function dropdownFunction() {
       }
     }
   }
+
+// Toggle form de respuesta en question.html
+function toggleAnswerForm() {
+  const form = document.getElementById('answer-form');
+  if (form) {
+      form.classList.toggle('d-none');
+  }
+}
+
+// Tabs en profile.html
+document.addEventListener('DOMContentLoaded', function () {
+  const triggerTabList = [].slice.call(document.querySelectorAll('#profileTabs a'));
+  triggerTabList.forEach(function (triggerEl) {
+      const tabTrigger = new bootstrap.Tab(triggerEl);
+      triggerEl.addEventListener('click', function (e) {
+          e.preventDefault();
+          tabTrigger.show();
+      });
+  });
+});

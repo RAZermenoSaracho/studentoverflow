@@ -3,7 +3,14 @@
 {% block title %}Pregunta{% endblock %}
 
 {% block content %}
-<h2>{{ question.title }}</h2>
+<div class="d-flex align-items-center flex-wrap mb-3">
+    <h2 class="me-2 mb-0">{{ question.title }}</h2>
+    <small class="text-muted d-flex align-items-center">
+        - by 
+        <img src="{{ url_for('static', filename='uploads/' ~ question.author.profile_picture) }}" alt="perfil" class="rounded-circle mx-2" width="32" height="32">
+        {{ question.author.username }}
+    </small>
+</div>
 <div>{{ question.body | safe }}</div>
 
 {% if question.images %}
@@ -61,9 +68,14 @@
 
     {% if results %}
         {% for answer in results %}
-        <li class="list-group-item d-flex justify-content-between align-items-start">
+        <li id="answer-{{ answer.id }}" class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
-                <div class="fw-bold">{{ answer.author.username }}</div>
+                <div class="fw-bold d-flex align-items-center">
+                    <a href="/profile/{{ answer.author.id }}" class="d-flex align-items-center text-decoration-none ms-2">
+                        <img src="{{ url_for('static', filename='uploads/' ~ answer.author.profile_picture) }}" alt="perfil" class="rounded-circle me-2" width="28" height="28">
+                        {{ answer.author.username }}
+                    </a>
+                </div>
                 <div>{{ answer.body | safe }}</div>
                 {% if answer.images %}
                     <div class="mt-2">
@@ -72,10 +84,13 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+                {% if current_user.is_authenticated and current_user.id == answer.user_id %}
+                    <a href="{{ url_for('views.edit_answer', answer_id=answer.id) }}" class="btn btn-sm btn-outline-warning mt-2">Editar respuesta</a>
+                {% endif %}
             </div>
             <div class="text-center">
                 <div class="mb-1 fw-bold">{{ answer.votes | map(attribute='value') | sum }}</div>
-                {% if current_user.is_authenticated %}
+                {% if current_user.is_authenticated and current_user.id != answer.author.id %}
                 <form method="POST" action="/answer/{{ answer.id }}/vote">
                     <input type="hidden" name="value" value="1">
                     <button class="btn btn-sm btn-outline-success mb-1">👍</button>
@@ -101,11 +116,4 @@
 
 {{ ckeditor.load() }}
 {{ ckeditor.config(name='body') }}
-
-<script>
-function toggleAnswerForm() {
-    const form = document.getElementById('answer-form');
-    form.classList.toggle('d-none');
-}
-</script>
 {% endblock %}

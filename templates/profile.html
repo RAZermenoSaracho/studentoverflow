@@ -1,58 +1,133 @@
 {% extends 'base.html' %}
 
-{% block title %}Mi Perfil{% endblock %}
+{% block title %}Perfil de {{ user.username }}{% endblock %}
 
 {% block content %}
 <div class="row mb-5">
-    <div class="col-4 mobile-12">
-        <h2>Perfil de {{ user.username }}</h2>
-        <span>Email: {{ user.email }}</span>
-    </div>
-    <div class="col-4 mobile-0"></div>
-    <div class="col-4 mobile-12">
-        <button id="edit-button" class="btn btn-primary mb-3" onclick="
-            document.getElementById('edit-form').classList.remove('d-none');
-            document.getElementById('edit-button').classList.add('d-none');
-        ">Editar datos</button>
+    <div class="col mobile-12">
+        <div class="row">
+            <div class="col-2 mobile-4">
+                <img src="{{ url_for('static', filename='uploads/' ~ user.profile_picture) }}" alt="perfil" class="rounded-circle me-2" width="80" height="80">
+            </div>
+            <div class="col-10 mobile-8">
+                <h2>{{ user.username }}</h2>
+                <span>{{ user.email }}</span>
+                <div class="mt-2">
+                    <span class="me-3">Preguntas: {{ user.questions|length }}</span>
+                    <span class="me-3">Respuestas: {{ user.answers|length }}</span>
+                    <span class="me-3">Puntos: {{ user.points }}</span>
+                    <span class="me-3">Ranking: #{{ user.rank }}</span>
+                </div>                
+            </div>
+        </div>
 
-        <form id="edit-form" class="d-none" method="POST" action="/profile/update">
+        {% if current_user.is_authenticated and current_user.id == user.id %}
+        <button id="edit-button" class="btn btn-primary mb-3 mt-3" onclick="document.getElementById('edit-form-wrapper').classList.toggle('d-none');">
+            Editar datos
+        </button>
+        {% endif %}
+    </div>
+
+    {% if current_user.is_authenticated and current_user.id == user.id %}
+    <div id="edit-form-wrapper" class="col mobile-12 d-none">
+        <form id="edit-form" method="POST" action="/profile/update" enctype="multipart/form-data">
             <label>Nombre de usuario:</label><br>
             <input type="text" name="username" value="{{ user.username }}"><br>
             <label>Email:</label><br>
             <input type="email" name="email" value="{{ user.email }}"><br>
             <label>Nueva contraseña (opcional):</label><br>
             <input type="password" name="password" placeholder="Dejar en blanco para no cambiar"><br><br>
+            <label>Foto de perfil:</label><br>
+            <input type="file" name="profile_picture"><br><br>
             <input type="submit" class="btn btn-success" value="Actualizar">
         </form>
-
     </div>
+    {% endif %}
 </div>
 
-<div class="row">
-    <div class="col">
-        <h3>Mis preguntas:</h3>
-    </div>
-    <div class="col text-end">
-        <form method="GET" action="/profile">
-            <input type="text" name="q" placeholder="Buscar preguntas...">
-            <input type="submit" value="Buscar">
-        </form>
-    </div>
-</div>
-
-<ul>
-    {% for question in questions %}
-    <div class="card">
-        <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
-        <p>{{ question.body[:150] | safe }}...</p>
-    </div>
-    {% else %}
-        {% if request.args.q %}
-            <p>No has publicado ninguna pregunta con "{{ request.args.q }}" en el título.</p>
-        {% else %}
-            <p>No has publicado ninguna pregunta.</p>
-        {% endif %}
-    {% endfor %}
+<!-- Tabs para cambiar entre preguntas y respuestas -->
+<ul class="nav nav-tabs mb-3" id="profileTabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#questions" data-bs-toggle="tab">Preguntas</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#answers" data-bs-toggle="tab">Respuestas</a>
+    </li>
 </ul>
 
+<div class="tab-content">
+    <!-- Sección de preguntas -->
+    <div class="tab-pane fade show active" id="questions">
+        <div class="row">
+            <div class="col text-end">
+                <form method="GET" action="">
+                    <input type="text" name="q" placeholder="Buscar preguntas...">
+                    <input type="submit" value="Buscar">
+                </form>
+            </div>
+        </div>
+
+        <ul>
+            {% for question in questions %}
+            <div class="card">
+                <div class="row p-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center flex-wrap mb-3">
+                            <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
+                        </div>
+                    </div>
+                    <div class="col-6 text-end">
+                        {% if current_user.is_authenticated and current_user.id == question.user_id %}
+                            <a href="{{ url_for('views.edit_question', question_id=question.id) }}" class="btn btn-sm btn-outline-warning mt-2">Editar pregunta</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <p class="truncate-text">{{ question.body | striptags }}</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                {% if request.args.q %}
+                    <p>No hay preguntas con "{{ request.args.q }}" en el título.</p>
+                {% else %}
+                    <p>No se han hecho preguntas todavía.</p>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Sección de respuestas -->
+    <div class="tab-pane fade" id="answers">
+        <div class="row mb-2">
+            <div class="col text-end">
+                <form method="GET" action="#answers">
+                    <input type="text" name="a" placeholder="Buscar respuestas...">
+                    <input type="submit" value="Buscar">
+                </form>
+            </div>
+        </div>
+
+        <ul>
+            {% set found = false %}
+            {% for answer in user.answers %}
+                {% set answer_query = request.args.get('a', '').lower() %}
+                {% if not answer_query or answer_query in answer.body.lower() or answer_query in answer.question.title.lower() %}
+                    {% set found = true %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <a href="{{ url_for('views.view_question', question_id=answer.question_id) }}#answer-{{ answer.id }}">
+                                Ir a la respuesta en "{{ answer.question.title }}"
+                            </a>
+                            <p class="truncate-text">{{ answer.body | striptags }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {% if not found %}
+                <p>No se encontraron respuestas con "{{ request.args.a }}".</p>
+            {% endif %}
+        </ul>
+    </div>
+</div>
 {% endblock %}

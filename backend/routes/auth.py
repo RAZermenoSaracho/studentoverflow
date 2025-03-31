@@ -14,16 +14,20 @@ def signup():
         password = request.form.get("password")
 
         if not username or not email or not password:
-            return "Todos los campos son obligatorios", 400
+            flash("Todos los campos son obligatorios", "warning")
+            return redirect(url_for("auth.signup"))
 
         if User.query.filter((User.username == username) | (User.email == email)).first():
-            return "El usuario ya existe", 409
+            flash("El nombre de usuario o correo ya está en uso", "warning")
+            return redirect(url_for("auth.signup"))
 
         hashed_password = generate_password_hash(password)
-        new_user = User(username=username, email=email, password_hash=hashed_password)
+        new_user = User(username=username, email=email, password_hash=hashed_password, profile_picture="default_pp.jpg")
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('auth.login'))
+
+        login_user(new_user)
+        return redirect(url_for('views.index'))
 
     return render_template("signup.html")
 

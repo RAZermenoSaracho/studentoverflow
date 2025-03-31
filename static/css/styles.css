@@ -26,14 +26,59 @@ footer {
     padding: 0px !important;
 }
 
-@media (max-width: 767.98px) {
-    .row .col-4.mobile-12 {
-      width: 100% !important;
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
+@media (max-width: 768px) {
+  .mobile-1 { flex: 0 0 auto !important; width: 8.333333% !important; }
+  .mobile-2 { flex: 0 0 auto !important; width: 16.666667% !important; }
+  .mobile-3 { flex: 0 0 auto !important; width: 25% !important; }
+  .mobile-4 { flex: 0 0 auto !important; width: 33.333333% !important; }
+  .mobile-5 { flex: 0 0 auto !important; width: 41.666667% !important; }
+  .mobile-6 { flex: 0 0 auto !important; width: 50% !important; }
+  .mobile-7 { flex: 0 0 auto !important; width: 58.333333% !important; }
+  .mobile-8 { flex: 0 0 auto !important; width: 66.666667% !important; }
+  .mobile-9 { flex: 0 0 auto !important; width: 75% !important; }
+  .mobile-10 { flex: 0 0 auto !important; width: 83.333333% !important; }
+  .mobile-11 { flex: 0 0 auto !important; width: 91.666667% !important; }
+  .mobile-12 { flex: 0 0 auto !important; width: 100% !important; }
+}
+
+@media (max-width: 768px) {
+  #profileTabs .nav-link {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
   }
-  
+}
+
+p {
+  margin-top: 0.3rem !important;
+  margin-bottom: 0.3rem !important;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
+.truncate-text {
+  display: -webkit-box;
+  line-clamp: 3;
+  -webkit-line-clamp: 3; /* número de líneas visibles */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
 /* ESTILOS PERSONALIZADOS PARA EL PROYECTO STUDENTOVERFLOW*/
 
 

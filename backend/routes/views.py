@@ -21,19 +21,27 @@ def index():
     return render_template("index.html", questions=questions)
 
 @views_bp.route("/profile", methods=["GET"])
+@views_bp.route("/profile/<int:user_id>", methods=["GET"])
 @login_required
-def profile():
-    query = request.args.get("q")
-    if query:
+def profile(user_id=None):
+    from backend.models.user import User  # asegúrate de tener esto al principio si no lo has importado
+
+    # Determinar a quién mostrar
+    user = User.query.get(user_id) if user_id else current_user
+
+    # Búsqueda de preguntas
+    q_query = request.args.get("q")
+    if q_query:
         questions = Question.query.filter(
             and_(
-                Question.user_id == current_user.id,
-                Question.title.ilike(f"%{query}%")
+                Question.user_id == user.id,
+                Question.title.ilike(f"%{q_query}%")
             )
         ).order_by(Question.created_at.desc()).all()
     else:
-        questions = Question.query.filter_by(user_id=current_user.id).order_by(Question.created_at.desc()).all()
-    return render_template("profile.html", user=current_user, questions=questions)
+        questions = Question.query.filter_by(user_id=user.id).order_by(Question.created_at.desc()).all()
+
+    return render_template("profile.html", user=user, questions=questions)
 
 @views_bp.route("/profile/update", methods=["POST"])
 @login_required
@@ -50,6 +58,19 @@ def update_profile():
 
     if new_password and new_password.strip():
         current_user.password_hash = generate_password_hash(new_password.strip())
+
+    picture = request.files.get("profile_picture")
+    if picture and picture.filename:
+        # Eliminar imagen anterior si existe
+        if current_user.profile_picture:
+            old_path = os.path.join(current_app.config["UPLOAD_FOLDER"], current_user.profile_picture)
+            if os.path.exists(old_path):
+                os.remove(old_path)
+
+        # Guardar nueva imagen
+        filename = secure_filename(picture.filename)
+        picture.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
+        current_user.profile_picture = filename
 
     db.session.commit()
     return redirect(url_for("views.profile"))

@@ -6,7 +6,15 @@
 <h2>Editar respuesta</h2>
 <form method="POST">
     <textarea name="body" id="body">{{ answer.body }}</textarea><br><br>
-    <input type="submit" class="btn btn-success" value="Actualizar">
+    <div class="row">
+        <div class="col">
+            <label>Adjuntar imágenes:</label><br>
+            <input type="file" name="images" multiple><br><br>
+        </div>
+        <div class="col text-end">
+            <input type="submit" value="Actualizar" class="btn btn-primary mb-3">
+        </div>
+    </div>
 </form>
 
 {{ ckeditor.load() }}

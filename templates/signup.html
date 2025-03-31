@@ -7,6 +7,16 @@
     <div class="col-4 mobile-0"></div>
     <div class="col-4 mobile-12">
         <h2>Crear Cuenta</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <form action="/signup" method="post">
             <label>Nombre de usuario:</label><br>
             <input type="text" name="username" required><br>

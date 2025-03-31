@@ -25,3 +25,4 @@ config/config.json
 static/uploads/*
 # Pero NO ignores el archivo .gitkeep
 !static/uploads/.gitkeep
+!static/uploads/default_pp.jpg

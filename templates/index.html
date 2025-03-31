@@ -18,8 +18,28 @@
 <ul>
     {% for question in questions %}
     <div class="card">
-        <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
-        <p>{{ question.body[:150] | safe }}...</p>
+        <div class="row p-3">
+            <div class="col-6">
+                <div class="d-flex align-items-center flex-wrap mb-3">
+                    <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
+                    <small class="text-muted d-flex align-items-center">
+                        - by 
+                        <a href="/profile/{{ question.author.id }}" class="d-flex align-items-center text-decoration-none ms-2">
+                            <img src="{{ url_for('static', filename='uploads/' ~ question.author.profile_picture) }}" alt="perfil" class="rounded-circle me-2" width="32" height="32">
+                            {{ question.author.username }}
+                        </a>
+                    </small>                    
+                </div>
+            </div>
+            <div class="col-6 text-end">
+                {% if current_user.is_authenticated and current_user.id == question.user_id %}
+                    <a href="{{ url_for('views.edit_question', question_id=question.id) }}" class="btn btn-sm btn-outline-warning mt-2">Editar pregunta</a>
+                {% endif %}
+            </div>
+            <div class="col-12">
+                <p class="truncate-text">{{ question.body | striptags }}</p>
+            </div>
+        </div>
     </div>
     {% else %}
     <p>No hay preguntas aún.</p>
