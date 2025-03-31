@@ -69,18 +69,45 @@ Esto creará la base de datos y las tablas automáticamente si no existen.
 studentoverflow/
 ├── app.py
 ├── backend/
+│   ├── forms/
+│       ├── answer_form.py
+│       └── question_form.py
 │   ├── models/
+│       ├── answer.py
+│       ├── image.py
+│       ├── question.py
+│       ├── user.py
+│       └── vote.py
 │   ├── routes/
+│       ├── __init__.py
+│       ├── auth.py
+│       └── views.py
 │   ├── extensions.py
-│   ├── login_manager.py
+│   └── login_manager.py
+├── templates/
+│   ├── ask.html
+│   ├── base.html
+│   ├── edit_answer.html
+│   ├── edit_question.html
+│   ├── footer.html
+│   ├── header.html
+│   ├── index.html
+│   ├── login.html
+│   ├── profile.html
+│   ├── question.html
+│   └── signup.html
+├── static/
+│   ├── css/
+│       └── styles.css
+│   ├── js/
+│       └── scripts.js
+│   └── uploads/
+│       └── default_pp.jpg
+├── config/
 │   ├── init_app.py
 │   ├── init_db.py
-│   └── ...
-├── templates/
-├── static/
-│   └── uploads/
-├── config_example.json
-├── config.json  # (creado manualmente)
+│   ├── config_example.json
+│   └── config.json              # (creado manualmente)
 ├── requirements.txt
 └── README.md
 ```
