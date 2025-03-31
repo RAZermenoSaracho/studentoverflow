@@ -1,13 +1,13 @@
 # StudentOverflow
 
-StudentOverflow es una aplicación web de preguntas y respuestas inspirada en StackOverflow. Permite a los usuarios registrarse, iniciar sesión, publicar preguntas, responder, votar, editar su perfil y ver rankings basados en reputación.
+**StudentOverflow** es una aplicación web de preguntas y respuestas tipo StackOverflow, construida con Flask, PostgreSQL y Bootstrap. Permite a los usuarios registrarse, publicar preguntas y respuestas, votar, editar su perfil y subir imágenes.
 
 ---
 
 ## 🚀 Requisitos
 
 - Python 3.9+
-- PostgreSQL
+- PostgreSQL instalado y corriendo
 - pip
 
 ---
@@ -34,27 +34,32 @@ source venv/bin/activate   # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Configura la base de datos PostgreSQL**:
+4. **Copia el archivo de configuración**:
 
-- Crea una base de datos llamada `studentoverflow`:
-
-```sql
-CREATE DATABASE studentoverflow;
+```bash
+cp config_example.json config.json
 ```
 
-- Asegúrate de que `app.py` o el archivo de configuración apunte a tu URI de conexión, por ejemplo:
+Luego edita `config.json` con tus credenciales de PostgreSQL:
 
-```python
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://usuario:contraseña@localhost/studentoverflow"
+```json
+{
+    "DB_USER": "tu_usuario",
+    "DB_PASSWORD": "tu_contraseña",
+    "DB_HOST": "localhost",
+    "DB_PORT": "5432",
+    "DB_NAME": "studentoverflow",
+    "SECRET_KEY": "clave_ultra_segura"
+}
 ```
 
-5. **Inicializa las tablas**:
+5. **Ejecuta la app**:
 
 ```bash
 python app.py
 ```
 
-Esto creará todas las tablas si aún no existen.
+Esto creará la base de datos y las tablas automáticamente si no existen.
 
 ---
 
@@ -66,34 +71,42 @@ studentoverflow/
 ├── backend/
 │   ├── models/
 │   ├── routes/
-│   ├── templates/
-│   ├── static/
+│   ├── extensions.py
+│   ├── login_manager.py
+│   ├── init_app.py
+│   ├── init_db.py
 │   └── ...
+├── templates/
+├── static/
+│   └── uploads/
+├── config_example.json
+├── config.json  # (creado manualmente)
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🧪 Funcionalidades
+## 🧪 Funcionalidades principales
 
 - Registro e inicio de sesión con validaciones
-- Perfil de usuario editable con foto de perfil
-- Publicación de preguntas y respuestas
+- Subida de foto de perfil
+- Edición de perfil
+- Publicación de preguntas y respuestas con imágenes
 - Votación positiva y negativa en respuestas
-- Ranking de usuarios por reputación
-- Búsqueda por preguntas y respuestas
-- Diseño responsive para dispositivos móviles
+- Ranking dinámico de usuarios por reputación
+- Búsqueda de preguntas y respuestas
+- Vista responsive para móviles
 
 ---
 
-## 🧼 Notas
+## 📦 Notas
 
-- Las imágenes se almacenan en `static/uploads/`
-- Para que las imágenes de perfil se carguen correctamente, asegúrate de que la carpeta `uploads/` exista y contenga el archivo `default_pp.jpg`.
+- Las imágenes de usuarios y preguntas se almacenan en `static/uploads/`
+- La imagen `default_pp.jpg` se usa como avatar predeterminado
 
 ---
 
 ## 💬 Licencia
 
-Este proyecto es de uso educativo.
+Este proyecto fue desarrollado con fines educativos.
