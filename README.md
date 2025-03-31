@@ -1,103 +1,99 @@
 # StudentOverflow
 
-💡 Plataforma tipo StackOverflow hecha con Flask y PostgreSQL, donde estudiantes pueden publicar preguntas académicas, recibir respuestas, votar, y usar formato Markdown.
+StudentOverflow es una aplicación web de preguntas y respuestas inspirada en StackOverflow. Permite a los usuarios registrarse, iniciar sesión, publicar preguntas, responder, votar, editar su perfil y ver rankings basados en reputación.
 
 ---
 
-## 🚀 Tecnologías
+## 🚀 Requisitos
 
-- Python 3
-- Flask
-- Flask-Login
-- SQLAlchemy
+- Python 3.9+
 - PostgreSQL
-- Markdown
-- HTML + CSS
+- pip
 
 ---
 
-## ⚙️ Instalación
+## 🔧 Instalación (modo local)
 
-### 1. Clona el repositorio
+1. **Clona el repositorio**:
 
 ```bash
-git clone https://github.com/tu-usuario/studentoverflow.git
+git clone https://github.com/tu_usuario/studentoverflow.git
 cd studentoverflow
 ```
 
-### 2. Crea y activa un entorno virtual (opcional pero recomendado)
+2. **Crea un entorno virtual**:
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate   # En Windows: venv\Scripts\activate
 ```
 
-### 3. Instala las dependencias
+3. **Instala las dependencias**:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configura tus credenciales de PostgreSQL
+4. **Configura la base de datos PostgreSQL**:
 
-Crea un archivo `config/config.json` basado en el ejemplo:
+- Crea una base de datos llamada `studentoverflow`:
 
-```
-config/
-├── config.json ← este archivo lo creas tú
-└── config_example.json ← ya incluido
+```sql
+CREATE DATABASE studentoverflow;
 ```
 
-Contenido de ejemplo:
+- Asegúrate de que `app.py` o el archivo de configuración apunte a tu URI de conexión, por ejemplo:
 
-```json
-{
-  "DB_USER": "tu_usuario",
-  "DB_PASSWORD": "tu_contraseña",
-  "DB_HOST": "localhost",
-  "DB_PORT": 5432,
-  "DB_NAME": "studentoverflow",
-  "SECRET_KEY": "clave-secreta-para-sesiones"
-}
+```python
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://usuario:contraseña@localhost/studentoverflow"
 ```
 
-> 🔒 Nota: `config/config.json` ya está ignorado en `.gitignore`.
-
----
-
-## 🧪 Ejecución local
+5. **Inicializa las tablas**:
 
 ```bash
 python app.py
 ```
 
-La aplicación se ejecutará en:
+Esto creará todas las tablas si aún no existen.
+
+---
+
+## 📂 Estructura del proyecto
 
 ```
-http://localhost:5000
+studentoverflow/
+├── app.py
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── templates/
+│   ├── static/
+│   └── ...
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## 📝 Funcionalidades
+## 🧪 Funcionalidades
 
-- Registro e inicio de sesión con sesiones persistentes
-- Crear y responder preguntas
-- Votar respuestas (positivo/negativo)
-- Renderizado de Markdown
-- Header y footer fijos
-- Interfaz limpia y responsiva
-
----
-
-## 🧩 Próximas mejoras
-
-- Vista previa de Markdown en tiempo real
-- Filtros por materia o categoría
-- Notificaciones y reputación de usuario
+- Registro e inicio de sesión con validaciones
+- Perfil de usuario editable con foto de perfil
+- Publicación de preguntas y respuestas
+- Votación positiva y negativa en respuestas
+- Ranking de usuarios por reputación
+- Búsqueda por preguntas y respuestas
+- Diseño responsive para dispositivos móviles
 
 ---
 
-## 📄 Licencia
+## 🧼 Notas
 
-MIT License
+- Las imágenes se almacenan en `static/uploads/`
+- Para que las imágenes de perfil se carguen correctamente, asegúrate de que la carpeta `uploads/` exista y contenga el archivo `default_pp.jpg`.
+
+---
+
+## 💬 Licencia
+
+Este proyecto es de uso educativo.
