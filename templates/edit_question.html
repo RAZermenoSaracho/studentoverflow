@@ -4,12 +4,33 @@
 
 {% block content %}
 <h2>Editar pregunta</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <form method="POST">
     <label>Título:</label><br>
     <input type="text" name="title" value="{{ question.title }}"><br><br>
 
     <label>Contenido:</label><br>
     <textarea name="body" id="body">{{ question.body }}</textarea><br><br>
+
+    <label>Categorías:</label><br>
+    <select id="edit-categories" name="categories" multiple placeholder="Escribe o selecciona...">
+        {% for category in all_categories %}
+        <option value="{{ category.name }}"
+            {% if category.name in question.categories | map(attribute='name') %}
+                selected
+            {% endif %}
+        >{{ category.name }}</option>
+        {% endfor %}
+    </select><br><br>
 
     <div class="row">
         <div class="col">

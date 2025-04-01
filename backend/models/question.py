@@ -1,6 +1,7 @@
 from backend.extensions import db
 from datetime import datetime
 from backend.models.vote import Vote
+from backend.models.category import question_category
 
 class Question(db.Model):
     __tablename__ = 'questions'
@@ -15,4 +16,6 @@ class Question(db.Model):
     votes = db.relationship(Vote, backref='question', lazy=True)
 
     images = db.relationship("Image", backref="question", cascade="all, delete-orphan")
+    categories = db.relationship('Category', secondary=question_category,back_populates='questions')
+
 

@@ -58,11 +58,27 @@
 <div class="tab-content">
     <!-- Sección de preguntas -->
     <div class="tab-pane fade show active" id="questions">
-        <div class="row">
-            <div class="col text-end">
-                <form method="GET" action="">
-                    <input type="text" name="q" placeholder="Buscar preguntas...">
-                    <input type="submit" value="Buscar">
+        <div class="row align-items-end mb-3 align-items-stretch">
+            <div class="col mb-3 align-items-stretch">
+                <form method="GET" action="/" class="d-flex">
+                    <input type="text" name="q" placeholder="Buscar preguntas..." class="form-control me-2">
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Buscar</button>
+                </form>
+            </div>
+            <div class="col-auto mb-3 d-flex align-items-stretch">
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleCategoryFilter()">Filtrar por categorías</button>
+            </div>
+            <div class="col-12 mb-3 d-none" id="category-filter-container">
+                <form method="GET" action="/" id="category-filter-form">
+                    <label for="categories">Selecciona categorías:</label>
+                    <select id="categories-select" name="categories" multiple placeholder="Escribe para buscar...">
+                        {% for category in all_categories %}
+                        <option value="{{ category.id }}" {% if category.id|string in selected_categories %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-outline-primary mt-2">Aplicar filtros</button>
                 </form>
             </div>
         </div>
@@ -74,6 +90,9 @@
                     <div class="col-6">
                         <div class="d-flex align-items-center flex-wrap mb-3">
                             <a href="/question/{{ question.id }}"><h3>{{ question.title }}</h3></a>
+                            <small class="text-muted ms-2" title="{{ question.created_at.strftime('%d %b %Y, %H:%M') }}">
+                                (hace {{ ((datetime.utcnow() - question.created_at).total_seconds() // 3600)|int }} hrs)
+                            </small>                            
                         </div>
                     </div>
                     <div class="col-6 text-end">
@@ -82,6 +101,11 @@
                         {% endif %}
                     </div>
                     <div class="col-12">
+                        <div class="mb-2">
+                            {% for category in question.categories %}
+                                <span class="badge bg-primary me-1">{{ category.name }}</span>
+                            {% endfor %}
+                        </div>   
                         <p class="truncate-text">{{ question.body | striptags }}</p>
                     </div>
                 </div>
@@ -118,6 +142,9 @@
                             <a href="{{ url_for('views.view_question', question_id=answer.question_id) }}#answer-{{ answer.id }}">
                                 Ir a la respuesta en "{{ answer.question.title }}"
                             </a>
+                            <small class="text-muted" title="{{ answer.created_at.strftime('%d %b %Y, %H:%M') }}">
+                                (hace {{ ((datetime.utcnow() - answer.created_at).total_seconds() // 3600)|int }} hrs)
+                            </small>                            
                             <p class="truncate-text">{{ answer.body | striptags }}</p>
                         </div>
                     </div>

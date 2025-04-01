@@ -68,3 +68,49 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 });
+
+function toggleCategoryFilter() {
+    const form = document.getElementById("category-filter-container");
+    form.classList.toggle("d-none");
+}
+
+// Tom Select
+document.addEventListener("DOMContentLoaded", function () {
+    if (document.querySelector('#categories-select')) {
+        new TomSelect('#categories-select', {
+            plugins: ['remove_button'],
+            persist: false,
+            maxItems: null,
+            valueField: 'value',
+            labelField: 'text',
+            searchField: ['text'],
+            create: false,
+            render: {
+                item: function(data, escape) {
+                    return `<div>${escape(data.text)}</div>`;
+                },
+                option: function(data, escape) {
+                    return `<div>${escape(data.text)}</div>`;
+                }
+            }
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const options = {
+        plugins: ['remove_button'],
+        persist: false,
+        create: true, // Permite agregar categorías nuevas
+        delimiter: ",",
+        maxItems: null,
+    };
+
+    if (document.querySelector("#ask-categories")) {
+        new TomSelect("#ask-categories", options);
+    }
+
+    if (document.querySelector("#edit-categories")) {
+        new TomSelect("#edit-categories", options);
+    }
+});

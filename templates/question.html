@@ -10,6 +10,9 @@
         <img src="{{ url_for('static', filename='uploads/' ~ question.author.profile_picture) }}" alt="perfil" class="rounded-circle mx-2" width="32" height="32">
         {{ question.author.username }}
     </small>
+    <small class="text-muted ms-2" title="{{ question.created_at.strftime('%d %b %Y, %H:%M') }}">
+        (hace {{ ((datetime.utcnow() - question.created_at).total_seconds() // 3600)|int }} hrs)
+    </small>    
 </div>
 <div>{{ question.body | safe }}</div>
 
@@ -75,7 +78,10 @@
                         <img src="{{ url_for('static', filename='uploads/' ~ answer.author.profile_picture) }}" alt="perfil" class="rounded-circle me-2" width="28" height="28">
                         {{ answer.author.username }}
                     </a>
-                </div>
+                    <small class="text-muted ms-2" title="{{ answer.created_at.strftime('%d %b %Y, %H:%M') }}">
+                        (hace {{ ((datetime.utcnow() - answer.created_at).total_seconds() // 3600)|int }} hrs)
+                    </small> 
+                </div>               
                 <div>{{ answer.body | safe }}</div>
                 {% if answer.images %}
                     <div class="mt-2">

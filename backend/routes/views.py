@@ -4,21 +4,41 @@ from backend.extensions import db
 from backend.models.question import Question
 from backend.models.answer import Answer
 from backend.models.image import Image
+from backend.models.category import Category
 from werkzeug.utils import secure_filename
 from sqlalchemy import and_
 from werkzeug.security import generate_password_hash
 import os
+from datetime import datetime
+from flask import flash
 
 views_bp = Blueprint("views", __name__)
 
 @views_bp.route("/")
 def index():
     query = request.args.get("q")
+    selected_categories = request.args.getlist("categories")
+    
+    questions_query = Question.query
+
     if query:
-        questions = Question.query.filter(Question.title.ilike(f"%{query}%")).all()
-    else:
-        questions = Question.query.order_by(Question.created_at.desc()).all()
-    return render_template("index.html", questions=questions)
+        questions_query = questions_query.filter(Question.title.ilike(f"%{query}%"))
+
+    if selected_categories:
+        questions_query = questions_query.join(Question.categories).filter(
+            Category.id.in_(selected_categories)
+        )
+
+    questions = questions_query.order_by(Question.created_at.desc()).all()
+    all_categories = Category.query.order_by(Category.name).all()
+
+    return render_template(
+        "index.html",
+        questions=questions,
+        all_categories=all_categories,
+        selected_categories=selected_categories,
+        datetime=datetime
+    )
 
 @views_bp.route("/profile", methods=["GET"])
 @views_bp.route("/profile/<int:user_id>", methods=["GET"])
@@ -41,7 +61,7 @@ def profile(user_id=None):
     else:
         questions = Question.query.filter_by(user_id=user.id).order_by(Question.created_at.desc()).all()
 
-    return render_template("profile.html", user=user, questions=questions)
+    return render_template("profile.html", user=user, questions=questions, datetime=datetime)
 
 @views_bp.route("/profile/update", methods=["POST"])
 @login_required
@@ -85,7 +105,7 @@ def view_question(question_id):
         key=lambda a: sum(v.value for v in a.votes),
         reverse=True
     )
-    return render_template("question.html", question=question, answers=sorted_answers)
+    return render_template("question.html", question=question, answers=sorted_answers, datetime=datetime)
 
 @views_bp.route("/question/<int:question_id>/answer", methods=["POST"])
 @login_required
@@ -114,17 +134,28 @@ def answer_question(question_id):
 @views_bp.route("/ask", methods=["GET", "POST"])
 @login_required
 def ask():
+    all_categories = Category.query.order_by(Category.name).all()
+
     if request.method == "POST":
         title = request.form.get("title")
         body = request.form.get("body")
+        category_names = request.form.getlist("categories")
         files = request.files.getlist("images")
 
-        if not title or not body:
-            return "Faltan campos", 400
+        if not title or not body or not category_names:
+            flash("Todos los campos, incluyendo las categorías, son obligatorios.", "danger")
+            return render_template("ask.html", all_categories=all_categories)
 
         new_question = Question(title=title, body=body, user_id=current_user.id)
         db.session.add(new_question)
-        db.session.flush()  # Necesario para obtener el ID antes del commit
+        db.session.flush()
+
+        for name in category_names:
+            category = Category.query.filter_by(name=name).first()
+            if not category:
+                category = Category(name=name)
+                db.session.add(category)
+            new_question.categories.append(category)
 
         for file in files:
             if file and file.filename:
@@ -136,7 +167,7 @@ def ask():
         db.session.commit()
         return redirect(url_for("views.index"))
 
-    return render_template("ask.html")
+    return render_template("ask.html", all_categories=all_categories)
 
 @views_bp.route("/answer/<int:answer_id>/vote", methods=["POST"])
 @login_required
@@ -179,17 +210,35 @@ def upload():
 @login_required
 def edit_question(question_id):
     question = Question.query.get_or_404(question_id)
+    all_categories = Category.query.order_by(Category.name).all()
 
     if question.user_id != current_user.id:
         return "No autorizado", 403
 
     if request.method == "POST":
-        question.title = request.form.get("title")
-        question.body = request.form.get("body")
+        title = request.form.get("title")
+        body = request.form.get("body")
+        category_names = request.form.getlist("categories")
+
+        if not title or not body or not category_names:
+            flash("Todos los campos, incluyendo las categorías, son obligatorios.", "danger")
+            return render_template("edit_question.html", question=question, all_categories=all_categories)
+
+        question.title = title
+        question.body = body
+        question.categories = []
+
+        for name in category_names:
+            category = Category.query.filter_by(name=name).first()
+            if not category:
+                category = Category(name=name)
+                db.session.add(category)
+            question.categories.append(category)
+
         db.session.commit()
         return redirect(url_for("views.view_question", question_id=question.id))
 
-    return render_template("edit_question.html", question=question)
+    return render_template("edit_question.html", question=question, all_categories=all_categories)
 
 @views_bp.route("/answer/<int:answer_id>/edit", methods=["GET", "POST"])
 @login_required
