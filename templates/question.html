@@ -11,7 +11,20 @@
         {{ question.author.username }}
     </small>
     <small class="text-muted ms-2" title="{{ question.created_at.strftime('%d %b %Y, %H:%M') }}">
-        (hace {{ ((datetime.utcnow() - question.created_at).total_seconds() // 3600)|int }} hrs)
+        {% set seconds = (datetime.utcnow() - question.created_at).total_seconds() %}
+        {% if seconds < 3600 %}
+            (hace {{ (seconds // 60)|int }} min)
+        {% elif seconds < 86400 %}
+            (hace {{ (seconds // 3600)|int }} {{'hrs' if (seconds // 3600)|int != 1 else 'hr'}})
+        {% elif seconds < 604800 %}
+            (hace {{ (seconds // 86400)|int }} {{'dias' if (seconds // 86400)|int != 1 else 'dia'}})
+        {% elif seconds < 2592000 %}
+            (hace {{ (seconds // 604800)|int }} {{'semanas' if (seconds // 604800)|int != 1 else 'semana'}})
+        {% elif seconds < 31536000 %}
+            (hace {{ (seconds // 2592000)|int }} {{'meses' if (seconds // 2592000)|int != 1 else 'mes'}})
+        {% else %}
+            (hace {{ (seconds // 31536000)|int }} {{'años' if (seconds // 31536000)|int != 1 else 'año'}})
+        {% endif %}
     </small>    
 </div>
 <div>{{ question.body | safe }}</div>
@@ -79,7 +92,20 @@
                         {{ answer.author.username }}
                     </a>
                     <small class="text-muted ms-2" title="{{ answer.created_at.strftime('%d %b %Y, %H:%M') }}">
-                        (hace {{ ((datetime.utcnow() - answer.created_at).total_seconds() // 3600)|int }} hrs)
+                        {% set seconds = (datetime.utcnow() - answer.created_at).total_seconds() %}
+                        {% if seconds < 3600 %}
+                            (hace {{ (seconds // 60)|int }} min)
+                        {% elif seconds < 86400 %}
+                            (hace {{ (seconds // 3600)|int }} {{'hrs' if (seconds // 3600)|int != 1 else 'hr'}})
+                        {% elif seconds < 604800 %}
+                            (hace {{ (seconds // 86400)|int }} {{'dias' if (seconds // 86400)|int != 1 else 'dia'}})
+                        {% elif seconds < 2592000 %}
+                            (hace {{ (seconds // 604800)|int }} {{'semanas' if (seconds // 604800)|int != 1 else 'semana'}})
+                        {% elif seconds < 31536000 %}
+                            (hace {{ (seconds // 2592000)|int }} {{'meses' if (seconds // 2592000)|int != 1 else 'mes'}})
+                        {% else %}
+                            (hace {{ (seconds // 31536000)|int }} {{'años' if (seconds // 31536000)|int != 1 else 'año'}})
+                        {% endif %}
                     </small> 
                 </div>               
                 <div>{{ answer.body | safe }}</div>
