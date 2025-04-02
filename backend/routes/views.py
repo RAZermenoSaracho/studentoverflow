@@ -84,7 +84,7 @@ def update_profile():
         # Eliminar imagen anterior si existe
         if current_user.profile_picture:
             old_path = os.path.join(current_app.config["UPLOAD_FOLDER"], current_user.profile_picture)
-            if os.path.exists(old_path):
+            if os.path.exists(old_path) and "default_pp.jpg" not in old_path:
                 os.remove(old_path)
 
         # Guardar nueva imagen
