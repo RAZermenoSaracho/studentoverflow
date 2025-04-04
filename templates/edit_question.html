@@ -14,7 +14,7 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <label>Título:</label><br>
     <input type="text" name="title" value="{{ question.title }}"><br><br>
 
@@ -33,14 +33,8 @@
     </select><br><br>
 
     <div class="row">
-        <div class="col">
-            <label>Adjuntar imágenes:</label><br>
-            <input type="file" name="images" multiple><br><br>
-        </div>
         <div class="col text-end"><input type="submit" value="Actualizar" class="btn btn-success"></div>
     </div>
 </form>
-
-{{ ckeditor.load() }}
-{{ ckeditor.config(name='body') }}
+  
 {% endblock %}

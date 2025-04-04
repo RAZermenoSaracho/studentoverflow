@@ -38,6 +38,8 @@
     <!-- Contenido principal -->
     <main class="container px-4 px-lg-5 mt-5 pt-5">
         {% block content %}{% endblock %}
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(name='body') }}
     </main>
 
     {% include 'footer.html' %}
@@ -45,6 +47,6 @@
     <!-- JS -->
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <!-- Tom Select -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>     
 </body>
 </html>

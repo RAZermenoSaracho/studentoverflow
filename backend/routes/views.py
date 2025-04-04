@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, current_app, flash, send_from_directory
 from flask_login import login_required, current_user
 from backend.extensions import db
 from backend.models.question import Question
@@ -10,9 +10,14 @@ from sqlalchemy import and_
 from werkzeug.security import generate_password_hash
 import os
 from datetime import datetime
-from flask import flash
+import time
+from flask_ckeditor import upload_success, upload_fail
 
 views_bp = Blueprint("views", __name__)
+
+@views_bp.route('/files/<path:filename>')
+def uploaded_files(filename):
+    return send_from_directory(current_app.config['UPLOAD_FOLDER'], filename)
 
 @views_bp.route("/")
 def index():
@@ -189,22 +194,28 @@ def vote_answer(answer_id):
     return redirect(url_for("views.view_question", question_id=answer.question_id))
 
 @views_bp.route('/upload', methods=['POST'], endpoint='upload')
+@login_required
 def upload():
     f = request.files.get('upload')
-    if not f:
-        return "No file", 400
+    if not f or f.filename == '':
+        return upload_fail(message="No se recibió archivo")
 
-    filename = secure_filename(f.filename)
-    upload_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+    ext = f.filename.rsplit('.', 1)[-1].lower()
+    if ext not in {'jpg', 'jpeg', 'png', 'gif'}:
+        return upload_fail(message="Formato no permitido")
+
+    filename = f"{int(time.time())}_{secure_filename(f.filename)}"
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
     os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
-    f.save(upload_path)
+    f.save(filepath)
 
-    file_url = url_for('static', filename='uploads/' + filename)
-    return f"""
-    <script type='text/javascript'>
-        window.parent.CKEDITOR.tools.callFunction({request.args.get('CKEditorFuncNum')}, '{file_url}', 'Imagen subida correctamente');
-    </script>
-    """
+    # Registra en DB si lo necesitas
+    image = Image(filename=filename, user_id=current_user.id)
+    db.session.add(image)
+    db.session.commit()
+
+    file_url = url_for('views.uploaded_files', filename=filename)
+    return upload_success(file_url, filename=filename)
 
 @views_bp.route("/question/<int:question_id>/edit", methods=["GET", "POST"])
 @login_required
@@ -226,6 +237,22 @@ def edit_question(question_id):
 
         question.title = title
         question.body = body
+
+        # Detectar imágenes eliminadas del contenido
+        existing_images = Image.query.filter_by(question_id=question.id).all()
+        for image in existing_images:
+            if image.filename not in body:
+                path = os.path.join(current_app.config['UPLOAD_FOLDER'], image.filename)
+                if os.path.exists(path):
+                    os.remove(path)
+                db.session.delete(image)
+
+        # Asociar imágenes cargadas por el usuario que ahora aparecen en el contenido
+        orphan_images = Image.query.filter_by(user_id=current_user.id, question_id=None, answer_id=None).all()
+        for image in orphan_images:
+            if image.filename in body:
+                image.question_id = question.id
+
         question.categories = []
 
         for name in category_names:
@@ -250,6 +277,22 @@ def edit_answer(answer_id):
 
     if request.method == "POST":
         answer.body = request.form.get("body")
+
+        # Eliminar imágenes que ya no están en el contenido
+        existing_images = Image.query.filter_by(answer_id=answer.id).all()
+        for image in existing_images:
+            if image.filename not in answer.body:
+                path = os.path.join(current_app.config['UPLOAD_FOLDER'], image.filename)
+                if os.path.exists(path):
+                    os.remove(path)
+                db.session.delete(image)
+
+        # Asociar nuevas imágenes cargadas con esta respuesta
+        orphan_images = Image.query.filter_by(user_id=current_user.id, question_id=None, answer_id=None).all()
+        for image in orphan_images:
+            if image.filename in answer.body:
+                image.answer_id = answer.id
+
         db.session.commit()
         return redirect(url_for("views.view_question", question_id=answer.question_id))
 

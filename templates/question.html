@@ -3,39 +3,40 @@
 {% block title %}Pregunta{% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center flex-wrap mb-3">
-    <h2 class="me-2 mb-0">{{ question.title }}</h2>
-    <small class="text-muted d-flex align-items-center">
-        - by 
-        <img src="{{ url_for('static', filename='uploads/' ~ question.author.profile_picture) }}" alt="perfil" class="rounded-circle mx-2" width="32" height="32">
-        {{ question.author.username }}
-    </small>
-    <small class="text-muted ms-2" title="{{ question.created_at.strftime('%d %b %Y, %H:%M') }}">
-        {% set seconds = (datetime.utcnow() - question.created_at).total_seconds() %}
-        {% if seconds < 3600 %}
-            (hace {{ (seconds // 60)|int }} min)
-        {% elif seconds < 86400 %}
-            (hace {{ (seconds // 3600)|int }} {{'hrs' if (seconds // 3600)|int != 1 else 'hr'}})
-        {% elif seconds < 604800 %}
-            (hace {{ (seconds // 86400)|int }} {{'dias' if (seconds // 86400)|int != 1 else 'dia'}})
-        {% elif seconds < 2592000 %}
-            (hace {{ (seconds // 604800)|int }} {{'semanas' if (seconds // 604800)|int != 1 else 'semana'}})
-        {% elif seconds < 31536000 %}
-            (hace {{ (seconds // 2592000)|int }} {{'meses' if (seconds // 2592000)|int != 1 else 'mes'}})
-        {% else %}
-            (hace {{ (seconds // 31536000)|int }} {{'años' if (seconds // 31536000)|int != 1 else 'año'}})
-        {% endif %}
-    </small>    
-</div>
-<div>{{ question.body | safe }}</div>
-
-{% if question.images %}
-    <div style="margin-top: 10px;">
-        {% for img in question.images %}
-        <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="imagen" style="max-width: 100%; margin: 10px 0;">
-        {% endfor %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <!-- Bloque izquierdo -->
+    <div class="d-flex flex-wrap align-items-center">
+        <h2 class="me-2 mb-0">{{ question.title }}</h2>
+        <small class="text-muted d-flex align-items-center">
+            - by 
+            <img src="{{ url_for('static', filename='uploads/' ~ question.author.profile_picture) }}" alt="perfil" class="rounded-circle mx-2" width="32" height="32">
+            {{ question.author.username }}
+        </small>
+        <small class="text-muted ms-2" title="{{ question.created_at.strftime('%d %b %Y, %H:%M') }}">
+            {% set seconds = (datetime.utcnow() - question.created_at).total_seconds() %}
+            {% if seconds < 3600 %}
+                (hace {{ (seconds // 60)|int }} min)
+            {% elif seconds < 86400 %}
+                (hace {{ (seconds // 3600)|int }} {{'hrs' if (seconds // 3600)|int != 1 else 'hr'}})
+            {% elif seconds < 604800 %}
+                (hace {{ (seconds // 86400)|int }} {{'días' if (seconds // 86400)|int != 1 else 'día'}})
+            {% elif seconds < 2592000 %}
+                (hace {{ (seconds // 604800)|int }} {{'semanas' if (seconds // 604800)|int != 1 else 'semana'}})
+            {% elif seconds < 31536000 %}
+                (hace {{ (seconds // 2592000)|int }} {{'meses' if (seconds // 2592000)|int != 1 else 'mes'}})
+            {% else %}
+                (hace {{ (seconds // 31536000)|int }} {{'años' if (seconds // 31536000)|int != 1 else 'año'}})
+            {% endif %}
+        </small>
     </div>
-{% endif %}
+
+    <!-- Botón a la derecha alineado al centro -->
+    {% if current_user.is_authenticated and current_user.id == question.user_id %}
+        <a href="{{ url_for('views.edit_question', question_id=question.id) }}" class="btn btn-sm btn-outline-warning">Editar pregunta</a>
+    {% endif %}
+</div>
+
+<div>{{ question.body | safe }}</div>
 
 <hr>
 
@@ -60,10 +61,6 @@
         <textarea name="body" id="body" required></textarea><br><br>
 
         <div class="row">
-            <div class="col">
-                <label>Adjuntar imágenes:</label><br>
-                <input type="file" name="images" multiple><br><br>
-            </div>
             <div class="col text-end">
                 <input type="submit" value="Responder" class="btn btn-primary mb-3">
             </div>
@@ -146,6 +143,4 @@
     {% endif %}
 </ul>
 
-{{ ckeditor.load() }}
-{{ ckeditor.config(name='body') }}
 {% endblock %}
