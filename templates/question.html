@@ -36,6 +36,14 @@
     {% endif %}
 </div>
 
+<div class="col-12">
+    <div class="mb-2">
+        {% for category in question.categories %}
+            <span class="badge bg-primary me-1">{{ category.name }}</span>
+        {% endfor %}
+    </div>
+</div>
+
 <div>{{ question.body | safe }}</div>
 
 <hr>
@@ -106,13 +114,6 @@
                     </small> 
                 </div>               
                 <div>{{ answer.body | safe }}</div>
-                {% if answer.images %}
-                    <div class="mt-2">
-                        {% for img in answer.images %}
-                        <img src="{{ url_for('static', filename='uploads/' ~ img.filename) }}" alt="imagen" class="img-fluid mb-2">
-                        {% endfor %}
-                    </div>
-                {% endif %}
                 {% if current_user.is_authenticated and current_user.id == answer.user_id %}
                     <a href="{{ url_for('views.edit_answer', answer_id=answer.id) }}" class="btn btn-sm btn-outline-warning mt-2">Editar respuesta</a>
                 {% endif %}
