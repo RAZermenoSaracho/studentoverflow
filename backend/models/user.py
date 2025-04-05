@@ -19,9 +19,8 @@ class User(UserMixin, db.Model):
 
     @property
     def points(self):
-        q_votes = sum(v.value for q in self.questions for v in q.votes)
         a_votes = sum(v.value for a in self.answers for v in a.votes)
-        return q_votes + a_votes
+        return a_votes
 
     @property
     def rank(self):

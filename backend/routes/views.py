@@ -5,6 +5,8 @@ from backend.models.question import Question
 from backend.models.answer import Answer
 from backend.models.image import Image
 from backend.models.category import Category
+from backend.models.user import User
+from backend.models.vote import Vote
 from werkzeug.utils import secure_filename
 from sqlalchemy import and_
 from werkzeug.security import generate_password_hash
@@ -49,8 +51,6 @@ def index():
 @views_bp.route("/profile/<int:user_id>", methods=["GET"])
 @login_required
 def profile(user_id=None):
-    from backend.models.user import User  # asegúrate de tener esto al principio si no lo has importado
-
     # Determinar a quién mostrar
     user = User.query.get(user_id) if user_id else current_user
 
@@ -186,7 +186,6 @@ def vote_answer(answer_id):
     if existing_vote:
         existing_vote.value = value  # actualiza el voto
     else:
-        from backend.models.vote import Vote
         vote = Vote(user_id=current_user.id, answer_id=answer.id, value=value)
         db.session.add(vote)
 
