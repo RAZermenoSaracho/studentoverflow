@@ -21,11 +21,6 @@ def load_user(user_id):
 
 register_routes(app)
 
-@app.template_filter("markdown")
-def markdown_filter(text):
-    from markdown import markdown
-    return markdown(text)
-
 @app.route("/")
 def home():
     return "Welcome to StudentOverflow!"

@@ -209,7 +209,7 @@ def upload():
     f.save(filepath)
 
     # Registra en DB si lo necesitas
-    image = Image(filename=filename, user_id=current_user.id)
+    image = Image(filename=filename)
     db.session.add(image)
     db.session.commit()
 
@@ -247,7 +247,7 @@ def edit_question(question_id):
                 db.session.delete(image)
 
         # Asociar imágenes cargadas por el usuario que ahora aparecen en el contenido
-        orphan_images = Image.query.filter_by(user_id=current_user.id, question_id=None, answer_id=None).all()
+        orphan_images = Image.query.filter_by(question_id=None, answer_id=None).all()
         for image in orphan_images:
             if image.filename in body:
                 image.question_id = question.id
@@ -287,7 +287,7 @@ def edit_answer(answer_id):
                 db.session.delete(image)
 
         # Asociar nuevas imágenes cargadas con esta respuesta
-        orphan_images = Image.query.filter_by(user_id=current_user.id, question_id=None, answer_id=None).all()
+        orphan_images = Image.query.filter_by(question_id=None, answer_id=None).all()
         for image in orphan_images:
             if image.filename in answer.body:
                 image.answer_id = answer.id

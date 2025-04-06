@@ -5,6 +5,5 @@ psycopg2-binary>=2.9
 Flask-WTF>=1.0
 WTForms>=3.0
 Flask-CKEditor>=0.4
-markdown>=3.3
 bootstrap-flask>=2.0
 bleach>=6.0
